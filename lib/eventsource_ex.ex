@@ -3,6 +3,8 @@ defmodule EventsourceEx do
   require Logger
 
   @spec new(String.t, Keyword.t) :: {:ok, pid}
+  @options [ssl: [{:versions, [:"tlsv1.2"]}], follow_redirect: true]
+
   def new(url, opts \\ []) do
     parent = opts[:stream_to] || self()
     opts = Keyword.put(opts, :stream_to, parent)
@@ -16,7 +18,7 @@ defmodule EventsourceEx do
     headers = opts[:headers]
     parent = opts[:stream_to]
 
-    HTTPoison.get!(url, headers, stream_to: self(), recv_timeout: :infinity)
+    HTTPoison.get!(url, headers, stream_to: self(), recv_timeout: :infinity ++ @options)
 
     {:ok, %{parent: parent, message: %EventsourceEx.Message{}, prev_chunk: nil}}
   end
