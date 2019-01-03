@@ -3,7 +3,7 @@ defmodule EventsourceEx do
   require Logger
 
   @spec new(String.t, Keyword.t) :: {:ok, pid}
-  @options [ssl: [{:versions, [:"tlsv1.2"]}], follow_redirect: true]
+  @options [ssl: [{:versions, [:"tlsv1.2"]}]]
 
   def new(url, opts \\ []) do
     parent = opts[:stream_to] || self()
