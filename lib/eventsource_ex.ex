@@ -48,10 +48,12 @@ defmodule EventsourceEx do
   end
 
   defp parse_stream(["" | data], parent, message) do
+    Logger.debug("message parsing attempting")
     if message.data, do: dispatch(parent, message)
     parse_stream(data, parent, %EventsourceEx.Message{})
   end
   defp parse_stream([line | data], parent, message) do
+    Logger.debug("message parsing attempting")
     message = parse(line, message)
     parse_stream(data, parent, message)
   end
@@ -59,6 +61,7 @@ defmodule EventsourceEx do
   defp parse_stream(data, _, _), do: raise ArgumentError, message: "Unparseable data: #{data}"
 
   defp parse(raw_line, message) do
+    Logger.debug("message parsing attempting")
     case raw_line do
       ":" <> _ -> message
       line ->
@@ -78,6 +81,7 @@ defmodule EventsourceEx do
   end
 
   defp dispatch(parent, message) do
+    Logger.debug("dispatch called")
     message = Map.put(message, :data, message.data |> String.replace_suffix("\n", "")) # Remove single trailing \n from message.data if necessary
     |> Map.put(:dispatch_ts, DateTime.utc_now) # Add dispatch timestamp
    
